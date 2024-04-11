@@ -10,7 +10,7 @@ spec:
   minReplicas: 1
   maxReplicas: 6
   metrics:
-  - type: ContainerResource
+    - type: ContainerResource
       containerResource:
         name: cpu
         container: application
