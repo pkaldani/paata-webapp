@@ -13,10 +13,6 @@ spec:
       {{- include "webapp-paata.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
-      annotations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
       labels:
         {{- include "webapp-paata.labels" . | nindent 8 }}
         {{- with .Values.podLabels }}
@@ -33,4 +29,6 @@ spec:
               containerPort: {{ .Values.service.port }}
               protocol: TCP
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+            requests:
+              memory: "128Mi"
+              cpu: "500m"
