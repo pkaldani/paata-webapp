@@ -5,9 +5,7 @@ metadata:
   namespace: {{ .Values.namespace }}
   name: {{ $fullName }}
   labels:
-  annotations:
-    kubernetes.io/ingress.class: azure/application-gateway
-
+    {{- include "webapp-paata.labels" . | nindent 4 }}
 spec:
   ingressClassName: {{ .Values.ingress.className }}
   rules:
