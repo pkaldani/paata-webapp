@@ -1,0 +1,33 @@
+{{- if .Values.keda.enabled -}}
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: "keda-object"
+  namespace: paata
+  labels:
+    {{- include "webapp-paata.labels" . | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "webapp-paata.fullname" . }}
+  pollingInterval: {{ .Values.keda.pollingInterval }}
+  cooldownPeriod: {{ .Values.keda.cooldownPeriod }}
+  minReplicaCount: {{ .Values.replicaCount }}
+  maxReplicaCount: {{ .Values.keda.maxReplicaCount }}
+  triggers:
+  - type: cpu
+    metricType: Utilization 
+    metadata:
+      value: "70"
+  - type: memory
+    metricType: Utilization
+    metadata:
+      value: "70"
+  - type: cron
+    metadata:
+      timezone: Asia/Tbilisi  
+      start: 0 6 * * *        
+      end: 0 12 * * *         
+      desiredReplicas: "4"
+{{- end -}}
