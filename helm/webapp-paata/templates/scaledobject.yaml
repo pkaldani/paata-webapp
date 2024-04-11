@@ -29,5 +29,5 @@ spec:
       timezone: Asia/Tbilisi  
       start: 0 6 * * *        
       end: 0 12 * * *         
-      desiredReplicas: "4"
+      desiredReplicas: "3"
 {{- end -}}

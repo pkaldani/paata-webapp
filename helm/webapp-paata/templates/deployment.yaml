@@ -7,7 +7,6 @@ metadata:
     {{- include "webapp-paata.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
-  {{- end }}
   selector:
     matchLabels:
       {{- include "webapp-paata.selectorLabels" . | nindent 6 }}
