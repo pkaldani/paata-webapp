@@ -5,12 +5,9 @@ image:
   pullPolicy: always
 
 service:
-  type: LoadBalancer
+  type: ClusterIP
   port: 80
-
-ingress:
-  enabled: false
-  className: "nginx"
+  name: webapp-paata-svc
 
 keda:
   enabled: true
