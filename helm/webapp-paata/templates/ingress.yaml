@@ -6,6 +6,8 @@ metadata:
   name: {{ $fullName }}
   labels:
     {{- include "webapp-paata.labels" . | nindent 4 }}
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   ingressClassName: {{ .Values.ingress.className }}
   rules:
