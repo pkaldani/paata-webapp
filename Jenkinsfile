@@ -63,10 +63,10 @@ pipeline {
                 echo "****Destroy job****"
                 sh """
                 set -x -e
-                if [${env.CHART_EXSITS}- eq ${PROJECT}]; then
-                    helm uninstall ${PROJECT} -n ${NAMESPACE}
-                else
+                if [ ${env.CHART_EXSITS} =='' ]; then
                     echo "Helm Chart does not exists"
+                else
+                    helm uninstall ${PROJECT} -n ${NAMESPACE}
                 fi
 
                 """
