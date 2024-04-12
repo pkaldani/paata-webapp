@@ -5,6 +5,7 @@ pipeline {
     }
     environment {
         NAMESPACE = 'paata'
+        PROJECT = 'paata-webapp'
     }
     stages {
         stage('init') {
@@ -32,8 +33,8 @@ pipeline {
                 sh """
                 set -x -e
                 export CHART_VER=\$(cat ./helm/paata-webapp/Chart.yaml | grep version | awk '{print \$2}')
-                helm package ./helm/${env.REPO_SLUG}
-                helm install ${env.REPO_SLUG} ./helm/${env.REPO_SLUG}-\${CHART_VER}.tgz -n ${NAMESPACE}
+                helm package ./helm/${PROJECT}
+                helm install ${PROJECT} ./helm/${PROJECT}-\${CHART_VER}.tgz -n ${NAMESPACE}
                 """
             }
         }
