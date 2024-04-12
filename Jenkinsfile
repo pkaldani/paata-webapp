@@ -12,10 +12,15 @@ pipeline {
                 echo "...init job..."
                 sh """
                 set -x -e
-                az login -i
-                az aks get-credentials -n devops-interview-aks -g  devops-interview-rg
-                export KUBECONFIG=/var/lib/jenkins/.kube/config
-                kubelogin convert-kubeconfig -l msi
+                if [! -f /var/lib/jenkins/.kube/config]
+                then
+                    az login -i
+                    az aks get-credentials -n devops-interview-aks -g  devops-interview-rg
+                    export KUBECONFIG=/var/lib/jenkins/.kube/config
+                    kubelogin convert-kubeconfig -l msi
+                else
+                    export KUBECONFIG=/var/lib/jenkins/.kube/config
+                fi
                 echo "***variables***"
                 printenv
                 """
