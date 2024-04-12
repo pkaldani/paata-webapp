@@ -34,7 +34,7 @@ pipeline {
                 set -x -e
                 export CHART_VER=\$(cat ./helm/paata-webapp/Chart.yaml | grep version | awk '{print \$2}')
                 helm package ./helm/${PROJECT}
-                helm install ${PROJECT} ./helm/${PROJECT}-\${CHART_VER}.tgz -n ${NAMESPACE}
+                helm install ${PROJECT} ${PROJECT}-\${CHART_VER}.tgz -n ${NAMESPACE}
                 """
             }
         }
