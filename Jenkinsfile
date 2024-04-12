@@ -1,7 +1,7 @@
 pipeline {
     agent any
     parameters {
-        choice(name: 'WEB_ENV', choices: ['deploy', 'destroy'], description: 'Action to take for web enviroment')
+        choice(name: 'helm_chart', choices: ['deploy', 'destroy'], description: 'Action to take for web')
     }
     environment {
         NAMESPACE = 'paata'
@@ -23,16 +23,24 @@ pipeline {
                     export KUBECONFIG=/var/lib/jenkins/.kube/config
                 fi
                 echo "***variables***"
+                export CHART_EXSITS=\$(helm list -n ${NAMESPACE} | grep ${PROJECT} | awk '{print \$1}')
                 printenv
                 """
+                // GIT_COMMIT_EMAIL = sh (
+                //     script: 'git --no-pager show -s --format=\'%ae\'',
+                //     returnStdout: true
+                //     ).trim()
+                
             }
         }
         stage('Deploy') {
+        when {
+            expression { params.helm_chart == 'deploy'}
+            }
             steps {
                 echo "...Deploy job..."
                 sh """
                 set -x -e
-                export CHART_EXSITS=\$(helm list -n ${NAMESPACE} | grep ${PROJECT} | awk '{print \$1}')
                 export CHART_VER=\$(cat ./helm/paata-webapp/Chart.yaml | grep version | awk '{print \$2}')
                 
                 helm package ./helm/${PROJECT}
@@ -41,6 +49,24 @@ pipeline {
                     helm install ${PROJECT} ${PROJECT}-\${CHART_VER}.tgz -n ${NAMESPACE}
                 else
                     helm upgrade ${PROJECT} ${PROJECT}-\${CHART_VER}.tgz -n ${NAMESPACE}  
+                fi
+
+                """
+            }
+        }
+        stage('Destroy') {
+        when {
+            expression { params.helm_chart == 'destroy'}
+            }
+            steps {
+                echo "...Destroy job..."
+                sh """
+                set -x -e
+                export CHART_EXSITS=\$(helm list -n ${NAMESPACE} | grep ${PROJECT} | awk '{print \$1}')
+                if [ \${CHART_EXSITS} == ${PROJECT} ]; then
+                    helm uninstall ${PROJECT} -n ${NAMESPACE}
+                else
+                    echo "Helm Chart does not exists"
                 fi
 
                 """
