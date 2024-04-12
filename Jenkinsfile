@@ -8,6 +8,7 @@ pipeline {
             steps {
                 sh """
                 set -x -e
+                az login -i
                 az aks get-credentials -n devops-interview-aks -g  devops-interview-rg
                 export KUBECONFIG=~/.kube/config
                 kubelogin convert-kubeconfig -l msi
