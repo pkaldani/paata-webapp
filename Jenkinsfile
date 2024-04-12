@@ -26,7 +26,7 @@ pipeline {
                 printenv
                 """
                 env.CHART_EXSITS = sh (
-                    script: 'helm list -n ${NAMESPACE} | grep ${PROJECT} | awk '{print \$1}'',
+                    script: "helm list -n ${NAMESPACE} | grep ${PROJECT} | awk '{print \$1}'",
                     returnStdout: true
                     ).trim()
                 
