@@ -3,6 +3,9 @@ pipeline {
     parameters {
         choice(name: 'WEB_ENV', choices: ['deploy', 'destroy'], description: 'Action to take for web enviroment')
     }
+    environment {
+        NAMESPACE = 'paata'
+    }
     stages {
         stage('init') {
             steps {
@@ -13,8 +16,8 @@ pipeline {
                 az aks get-credentials -n devops-interview-aks -g  devops-interview-rg
                 export KUBECONFIG=/var/lib/jenkins/.kube/config
                 kubelogin convert-kubeconfig -l msi
-                echo "init kubectl"
-                kubectl get pods -n paata
+                echo "***variables***"
+                printenv
                 """
             }
         }
@@ -23,11 +26,10 @@ pipeline {
                 echo "...Deploy job..."
                 sh """
                 set -x -e
-                echo "......deploy kubectl"
-                kubectl get pods -n paata
-
+                export CHART_VER=\$(cat ./helm/paata-webapp/Chart.yaml | grep version | awk '{print \$2}')
+                helm package ./helm/${env.REPO_SLUG}
+                helm install ${env.REPO_SLUG} ./helm/${env.REPO_SLUG}-\${CHART_VER}.tgz -n ${NAMESPACE}
                 """
-                echo 'Hello,'
             }
         }
     }
