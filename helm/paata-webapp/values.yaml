@@ -1,0 +1,17 @@
+replicaCount: 1
+namespace: paata
+image:
+  repository: acrinterview.azurecr.io/simple-web
+  pullPolicy: always
+
+service:
+  type: ClusterIP
+  port: 80
+  name: webapp-paata-svc
+
+keda:
+  enabled: true
+  pollingInterval: 30 
+  cooldownPeriod: 60 
+  minReplicaCount: 1
+  maxReplicaCount: 6 

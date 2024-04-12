@@ -1,0 +1,6 @@
+apiVersion: v2
+name: paata-webapp
+description: A Helm chart for Sample web 
+type: application
+version: 1.0.5
+appVersion: "1.0.0"
