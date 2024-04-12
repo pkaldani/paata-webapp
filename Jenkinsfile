@@ -36,8 +36,7 @@ pipeline {
                 export CHART_VER=\$(cat ./helm/paata-webapp/Chart.yaml | grep version | awk '{print \$2}')
                 
                 helm package ./helm/${PROJECT}
-                if [ -z \${CHART_EXSITS} ]
-                then
+                if [ -n \${CHART_EXSITS} ]; then
                     helm upgrade ${PROJECT} ${PROJECT}-\${CHART_VER}.tgz -n ${NAMESPACE}
                 else
                     helm install ${PROJECT} ${PROJECT}-\${CHART_VER}.tgz -n ${NAMESPACE}
