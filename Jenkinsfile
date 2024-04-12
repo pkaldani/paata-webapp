@@ -6,6 +6,7 @@ pipeline {
     stages {
         stage('init') {
             steps {
+                echo "...init job..."
                 sh """
                 set -x -e
                 az login -i
@@ -19,6 +20,7 @@ pipeline {
         }
         stage('Deploy') {
             steps {
+                echo "...Deploy job..."
                 sh """
                 set -x -e
                 echo "......deploy kubectl"
