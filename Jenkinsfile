@@ -25,13 +25,13 @@ pipeline {
                 echo "***variables***"
                 printenv
                 """
-                CHART_EXSITS = sh (
-                    script: "helm list -n ${NAMESPACE} | grep ${PROJECT} | awk '{print \$1}'",
-                    returnStdout: true
-                    ).trim()
-                
+                script {
+                    env.CHART_EXSITS = sh (
+                        script: "helm list -n ${NAMESPACE} | grep ${PROJECT} | awk '{print \$1}'",
+                        returnStdout: true
+                        ).trim()
+                }
                 echo "${env.CHART_EXSITS}"
-                
             }
         }
         stage('Deploy') {
