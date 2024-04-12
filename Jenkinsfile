@@ -32,15 +32,15 @@ pipeline {
                 echo "...Deploy job..."
                 sh """
                 set -x -e
-                export CHART_EXSITS=\$(helm list -n paata | grep paata-webapp | awk '{print \$1}')
+                export CHART_EXSITS=\$(helm list -n ${NAMESPACE} | grep ${PROJECT} | awk '{print \$1}')
                 export CHART_VER=\$(cat ./helm/paata-webapp/Chart.yaml | grep version | awk '{print \$2}')
                 
                 helm package ./helm/${PROJECT}
-                if [\$CHART_EXSITS == '' | \$CHART_EXSITS == null ]
+                if [ -n \$CHART_EXSITS ]
                 then
-                    helm install ${PROJECT} ${PROJECT}-\${CHART_VER}.tgz -n ${NAMESPACE}
-                else
                     helm upgrade ${PROJECT} ${PROJECT}-\${CHART_VER}.tgz -n ${NAMESPACE}
+                else
+                    helm install ${PROJECT} ${PROJECT}-\${CHART_VER}.tgz -n ${NAMESPACE}
                 fi
 
                 """
