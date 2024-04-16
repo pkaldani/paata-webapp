@@ -68,7 +68,7 @@ pipeline {
                 }
                 sh """
                 set -x -e
-                if [ ${env.DESTROY} == 'approve' ] then
+                if [ ${env.DESTROY} == 'approve' ]; then
                     if [ ${env.CHART_EXSITS} =='' ]; then
                         echo "Helm Chart does not exists"
                     else
