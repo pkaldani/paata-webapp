@@ -61,14 +61,22 @@ pipeline {
             }
             steps {
                 echo "****Destroy job****"
+
+                script {
+                    env.DESTROY = input message: 'User input required', ok: 'Destroy!',
+                            parameters: [choice(name: 'Approve Destroy', choices: ['approve', 'abort'], description: 'Please approve destroy action')]
+                }
                 sh """
                 set -x -e
-                if [ ${env.CHART_EXSITS} =='' ]; then
-                    echo "Helm Chart does not exists"
+                if [ ${env.DESTROY} == 'approve' ] then
+                    if [ ${env.CHART_EXSITS} =='' ]; then
+                        echo "Helm Chart does not exists"
+                    else
+                        helm uninstall ${PROJECT} -n ${NAMESPACE}
+                    fi
                 else
-                    helm uninstall ${PROJECT} -n ${NAMESPACE}
+                    echo "Destroy Action is aborted"
                 fi
-
                 """
             }
         }
