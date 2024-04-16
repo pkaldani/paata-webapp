@@ -12,6 +12,7 @@ pipeline {
             steps {
                 echo "****init job****"
                 sh """
+                #!/bin/bash
                 set -x -e
                 if [! -f /var/lib/jenkins/.kube/config]
                 then
@@ -41,12 +42,13 @@ pipeline {
             steps {
                 echo "****Deploy job****"
                 sh """
+                #!/bin/bash
                 set -x -e
                 export CHART_VER=\$(cat ./helm/paata-webapp/Chart.yaml | grep version | awk '{print \$2}')
                 
                 helm package ./helm/${PROJECT}
 
-                if [ ${env.CHART_EXSITS} =='' ]; then
+                if [ '${env.CHART_EXSITS}' = '' ]; then
                     helm install ${PROJECT} ${PROJECT}-\${CHART_VER}.tgz -n ${NAMESPACE}
                 else
                     helm upgrade ${PROJECT} ${PROJECT}-\${CHART_VER}.tgz -n ${NAMESPACE}  
@@ -61,14 +63,23 @@ pipeline {
             }
             steps {
                 echo "****Destroy job****"
-                sh """
-                set -x -e
-                if [ ${env.CHART_EXSITS} =='' ]; then
-                    echo "Helm Chart does not exists"
-                else
-                    helm uninstall ${PROJECT} -n ${NAMESPACE}
-                fi
 
+                script {
+                    env.DESTROY = input message: 'User input required', ok: 'Procced!',
+                            parameters: [choice(name: 'Approve Destroy', choices: ['approve', 'abort'], description: 'Please approve destroy action')]
+                }
+                sh """
+                #!/bin/bash
+                set -x -e
+                if [ "${env.DESTROY}" = "approve" ]; then
+                    if [ '${env.CHART_EXSITS}' = '' ]; then
+                        echo "Helm Chart does not exists"
+                    else
+                        helm uninstall ${PROJECT} -n ${NAMESPACE}
+                    fi
+                else
+                    echo "Destroy Action is aborted"
+                fi
                 """
             }
         }
