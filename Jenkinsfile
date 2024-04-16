@@ -48,7 +48,7 @@ pipeline {
                 
                 helm package ./helm/${PROJECT}
 
-                if [ '${env.CHART_EXSITS}' =='' ]; then
+                if [ '${env.CHART_EXSITS}' = '' ]; then
                     helm install ${PROJECT} ${PROJECT}-\${CHART_VER}.tgz -n ${NAMESPACE}
                 else
                     helm upgrade ${PROJECT} ${PROJECT}-\${CHART_VER}.tgz -n ${NAMESPACE}  
@@ -72,7 +72,7 @@ pipeline {
                 #!/bin/bash
                 set -x -e
                 if [ "${env.DESTROY}" = "approve" ]; then
-                    if [ '${env.CHART_EXSITS}' =='' ]; then
+                    if [ '${env.CHART_EXSITS}' = '' ]; then
                         echo "Helm Chart does not exists"
                     else
                         helm uninstall ${PROJECT} -n ${NAMESPACE}
