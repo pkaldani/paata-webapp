@@ -12,6 +12,7 @@ pipeline {
             steps {
                 echo "****init job****"
                 sh """
+                #!/bin/bash
                 set -x -e
                 if [! -f /var/lib/jenkins/.kube/config]
                 then
@@ -41,6 +42,7 @@ pipeline {
             steps {
                 echo "****Deploy job****"
                 sh """
+                #!/bin/bash
                 set -x -e
                 export CHART_VER=\$(cat ./helm/paata-webapp/Chart.yaml | grep version | awk '{print \$2}')
                 
@@ -67,6 +69,7 @@ pipeline {
                             parameters: [choice(name: 'Approve Destroy', choices: ['approve', 'abort'], description: 'Please approve destroy action')]
                 }
                 sh """
+                #!/bin/bash
                 set -x -e
                 if [ "${env.DESTROY}" -eq "approve" ]; then
                     if [ '${env.CHART_EXSITS}' =='' ]; then
