@@ -46,7 +46,7 @@ pipeline {
                 
                 helm package ./helm/${PROJECT}
 
-                if [ ${env.CHART_EXSITS} =='' ]; then
+                if [ '${env.CHART_EXSITS}' =='' ]; then
                     helm install ${PROJECT} ${PROJECT}-\${CHART_VER}.tgz -n ${NAMESPACE}
                 else
                     helm upgrade ${PROJECT} ${PROJECT}-\${CHART_VER}.tgz -n ${NAMESPACE}  
@@ -63,13 +63,13 @@ pipeline {
                 echo "****Destroy job****"
 
                 script {
-                    env.DESTROY = input message: 'User input required', ok: 'Destroy!',
+                    env.DESTROY = input message: 'User input required', ok: 'Procced!',
                             parameters: [choice(name: 'Approve Destroy', choices: ['approve', 'abort'], description: 'Please approve destroy action')]
                 }
                 sh """
                 set -x -e
-                if [ ${env.DESTROY} == 'approve' ]; then
-                    if [ ${env.CHART_EXSITS} =='' ]; then
+                if [ "${env.DESTROY}" == "approve" ]; then
+                    if [ '${env.CHART_EXSITS}' =='' ]; then
                         echo "Helm Chart does not exists"
                     else
                         helm uninstall ${PROJECT} -n ${NAMESPACE}
