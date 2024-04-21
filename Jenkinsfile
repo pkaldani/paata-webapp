@@ -97,8 +97,10 @@ pipeline {
                         ).trim()
                     if (env.HTTP_CODE == '200') {
                         currentBuild.result = "SUCCESS"
+                        echo "Healthcheck step retured http code: ${HTTP_CODE}"
                     }
                     else {
+                        echo "Healthcheck step retured http code: ${HTTP_CODE}"
                         currentBuild.result = "FAILURE"
                     }
                 }
