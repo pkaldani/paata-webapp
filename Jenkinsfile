@@ -6,6 +6,7 @@ pipeline {
     environment {
         NAMESPACE = 'paata'
         PROJECT = 'paata-webapp'
+        ENDPOINT = '20.86.195.36/paata'
     }
     stages {
         stage('init') {
@@ -51,7 +52,7 @@ pipeline {
                 if [ '${env.CHART_EXSITS}' = '' ]; then
                     helm install ${PROJECT} ${PROJECT}-\${CHART_VER}.tgz -n ${NAMESPACE}
                 else
-                    helm upgrade ${PROJECT} ${PROJECT}-\${CHART_VER}.tgz -n ${NAMESPACE}  
+                    helm upgrade ${PROJECT} ${PROJECT}-\${CHART_VER}.tgz -n ${NAMESPACE}
                 fi
 
                 """
@@ -70,12 +71,12 @@ pipeline {
                 }
                 sh """
                 #!/bin/bash
-                set -x -e
+                set -x -es
                 if [ "${env.DESTROY}" = "approve" ]; then
                     if [ '${env.CHART_EXSITS}' = '' ]; then
                         echo "Helm Chart does not exists"
                     else
-                        helm uninstall ${PROJECT} -n ${NAMESPACE}
+                        helm uninstall ${PROJECT} -n ${NAMESPACE} --keep-history
                     fi
                 else
                     echo "Destroy Action is aborted"
@@ -83,5 +84,25 @@ pipeline {
                 """
             }
         }
+    stage('Healthcheck') {
+        when {
+            expression { params.helm_chart == 'deploy'}
+            }
+            steps {
+                echo "****Healthcheck job****"
+                script {
+                    env.HTTP_CODE = sh (
+                        script: "curl --write-out %{http_code} --silent --output /dev/null ${ENDPOINT}",
+                        returnStdout: true
+                        ).trim()
+                    if (env.HTTP_CODE == '200') {
+                        currentBuild.result = "SUCCESS"
+                    }
+                    else {
+                        currentBuild.result = "FAILURE"
+                    }
+                }
+            }
+        }   
     }
 }
