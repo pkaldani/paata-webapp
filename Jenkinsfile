@@ -76,7 +76,7 @@ pipeline {
                     if [ '${env.CHART_EXSITS}' = '' ]; then
                         echo "Helm Chart does not exists"
                     else
-                        helm uninstall ${PROJECT} -n ${NAMESPACE} --keep-history
+                        helm uninstall ${PROJECT} -n ${NAMESPACE}
                     fi
                 else
                     echo "Destroy Action is aborted"
